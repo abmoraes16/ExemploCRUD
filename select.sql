@@ -1,0 +1,1 @@
+select * from Categorias where Titulo like 'esco'

@@ -9,7 +9,7 @@ namespace ExemploCRUD
     {
         SqlConnection connection;
         SqlCommand comandos;
-        SqlDataReader reader;
+        SqlDataReader reader = null;
 
         public bool Adicionar(Categoria cat)
         {
@@ -141,12 +141,18 @@ namespace ExemploCRUD
             connection.ConnectionString = @"Data source=.\SQLEXPRESS;Initial Catalog=Papelaria;user id=sa;password=senai@123";
             connection.Open();
 
-            comandos = new SqlCommand();
-            comandos.CommandType = CommandType.Text;
-            comandos.CommandText = "select * from Categoria where IdCategoria=@id";
-            comandos.Parameters.AddWithValue("@id",Id);
+            Console.WriteLine("teste");
 
+            comandos = new SqlCommand();
+            comandos.Connection = connection;
+
+            comandos.CommandType = CommandType.Text;
+            comandos.CommandText = "select * from Categorias where idCategoria=@id";
+            comandos.Parameters.AddWithValue("@id",Id);
+            Console.WriteLine("teste2");
+            reader = null;
             reader = comandos.ExecuteReader();
+            Console.WriteLine("reader");
 
             while(reader.Read()){
                 //popular lista de tipo Categoria
@@ -155,6 +161,7 @@ namespace ExemploCRUD
                                   Titulo = reader.GetString(1)
                                   }
                                   );
+                Console.WriteLine("lista");
             }
 
             comandos.Parameters.Clear();
@@ -184,8 +191,10 @@ namespace ExemploCRUD
             connection.Open();
 
             comandos = new SqlCommand();
+            comandos.Connection = connection;
+
             comandos.CommandType = CommandType.Text;
-            comandos.CommandText = "select * from Categoria where Titulo=@titulo";
+            comandos.CommandText = "select * from Categorias where Titulo=@titulo";
             comandos.Parameters.AddWithValue("@titulo",Titulo);
 
             reader = comandos.ExecuteReader();
