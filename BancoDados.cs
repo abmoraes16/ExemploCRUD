@@ -225,5 +225,54 @@ namespace ExemploCRUD
         
         }
 
+        //usando Procedure
+        public bool AdicionarCliente(Cliente cliente){
+            bool rs = false;
+
+            try{
+                connection = new SqlConnection();
+                connection.ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=Papelaria;user id=sa;password=senai@123";
+                connection.Open();
+
+                comandos = new SqlCommand();
+
+                comandos.Connection = connection;
+                
+                comandos.CommandType = CommandType.StoredProcedure;
+                //procedure
+                comandos.CommandText = "sp_cadCliente";
+
+                //parametros para passar os dados para procedure
+                SqlParameter pnome = new SqlParameter("@Nome",SqlDbType.VarChar,50);
+                pnome.Value = cliente.NomeCliente;
+                comandos.Parameters.Add(pnome);
+
+                SqlParameter pemail = new SqlParameter("@email",SqlDbType.VarChar,100);
+                pemail.Value = cliente.Email;
+                comandos.Parameters.Add(pemail);
+
+                SqlParameter pcpf = new SqlParameter("@Cpf",SqlDbType.VarChar,20);
+                pcpf.Value = cliente.CPF;
+                comandos.Parameters.Add(pcpf);
+
+                int r = comandos.ExecuteNonQuery();
+
+                if (r>0)
+                    rs=true;
+
+                comandos.Parameters.Clear();
+            }
+            catch(SqlException se){
+                throw new Exception("Erro ao tentar inserir os dados. "+se.Message);
+            }
+            catch(Exception ex){
+                throw new Exception("Erro inesperado! "+ex.Message);
+            }
+            finally{
+                connection.Close();
+            }
+            return rs;
+        }
+
     }
 }
